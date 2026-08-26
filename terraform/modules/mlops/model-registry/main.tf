@@ -1,1 +1,2 @@
-resource "aws_sagemaker_model_package_group" "this" { model_package_group_name=var.name_prefix tags=var.tags }
+# Model package versions are created after training and approval.
+# The model package group is owned by the SageMaker service module.
