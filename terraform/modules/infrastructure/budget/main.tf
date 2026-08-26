@@ -1,1 +1,18 @@
-resource "aws_budgets_budget" "monthly" { name="${var.name_prefix}-budget" budget_type="COST" limit_amount=tostring(var.monthly_limit) limit_unit="USD" time_unit="MONTHLY" dynamic "notification" { for_each=var.sns_topic_arn == "" ? [] : [1] content { comparison_operator="GREATER_THAN" threshold=80 threshold_type="PERCENTAGE" notification_type="ACTUAL" subscriber_sns_topic_arns=[var.sns_topic_arn] } } }
+resource "aws_budgets_budget" "monthly" {
+  count = var.enabled ? 1 : 0
+  name = "${var.name_prefix}-budget"
+  budget_type = "COST"
+  limit_amount = tostring(var.monthly_limit)
+  limit_unit = "USD"
+  time_unit = "MONTHLY"
+  dynamic "notification" {
+    for_each = var.sns_topic_arn == "" ? [] : [1]
+    content {
+      comparison_operator = "GREATER_THAN"
+      threshold = 80
+      threshold_type = "PERCENTAGE"
+      notification_type = "ACTUAL"
+      subscriber_sns_topic_arns = [var.sns_topic_arn]
+    }
+  }
+}
