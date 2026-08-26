@@ -1,0 +1,9 @@
+output "vpc_id" { value = module.infrastructure.vpc_id }
+output "raw_bucket_name" { value = module.infrastructure.raw_bucket_name }
+output "curated_bucket_name" { value = module.infrastructure.curated_bucket_name }
+output "artifacts_bucket_name" { value = module.infrastructure.artifacts_bucket_name }
+output "kms_key_arn" { value = module.infrastructure.kms_key_arn }
+output "data_role_arn" { value = module.infrastructure.data_role_arn }
+output "ml_role_arn" { value = module.infrastructure.ml_role_arn }
+output "athena_workgroup" { value = module.data_collection.athena_workgroup }
+output "sagemaker_model_group" { value = module.mlops.model_package_group_name }
