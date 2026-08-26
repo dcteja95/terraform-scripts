@@ -1,0 +1,3 @@
+data "aws_iam_policy_document" "assume" { count=var.account_id != "" && var.external_id != "" ? 1 : 0 statement { effect="Allow" principals { type="AWS" identifiers=["arn:aws:iam::${var.account_id}:root"] } actions=["sts:AssumeRole"] condition { test="StringEquals" variable="sts:ExternalId" values=[var.external_id] } } }
+resource "aws_iam_role" "this" { count=var.account_id != "" && var.external_id != "" ? 1 : 0 name="${var.name_prefix}-evaluator-readonly" assume_role_policy=data.aws_iam_policy_document.assume[0].json tags=var.tags }
+resource "aws_iam_role_policy_attachment" "readonly" { count=var.account_id != "" && var.external_id != "" ? 1 : 0 role=aws_iam_role.this[0].name policy_arn="arn:aws:iam::aws:policy/ReadOnlyAccess" }
