@@ -1,0 +1,13 @@
+region = "REPLACE_WITH_AWS_REGION"
+project = "bmw"
+team = "developer"
+environment = "prod"
+vpc_cidr = "10.0.0.0/16"
+alert_email = ""
+monthly_budget_limit = 50
+enable_budget = true
+enable_alerting = true
+
+# Populate only when evaluator details are provided.
+evaluator_account_id = ""
+evaluator_external_id = ""
