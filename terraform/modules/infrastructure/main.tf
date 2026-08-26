@@ -8,3 +8,4 @@ module "sns" { source="./sns" name_prefix=var.name_prefix alert_email=var.alert_
 module "budget" { source="./budget" name_prefix=var.name_prefix monthly_limit=var.monthly_budget_limit sns_topic_arn=var.enable_alerting ? module.sns.topic_arn : "" enabled=var.enable_budget }
 module "cloudwatch" { source="./cloudwatch" name_prefix=var.name_prefix nat_gateway_ids=module.vpc.nat_gateway_ids sns_topic_arn=var.enable_alerting ? module.sns.topic_arn : "" tags=var.tags }
 module "security_groups" { source="./security-groups" name_prefix=var.name_prefix vpc_id=module.vpc.vpc_id tags=var.tags }
+module "evaluator_access" { source="./evaluator-access" name_prefix=var.name_prefix account_id=var.evaluator_account_id external_id=var.evaluator_external_id tags=var.tags }
