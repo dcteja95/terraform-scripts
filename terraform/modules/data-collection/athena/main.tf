@@ -1,0 +1,1 @@
+resource "aws_athena_workgroup" "this" { name="${var.name_prefix}-athena" configuration { enforce_workgroup_configuration=true result_configuration { output_location="s3://${var.artifacts_bucket_name}/athena-results/" } } tags=var.tags }
