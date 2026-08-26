@@ -1,6 +1,7 @@
 module "infrastructure" {
   source = "../../modules/infrastructure"
   name_prefix = "${var.environment}-${var.project}"
+  region = var.region
   vpc_cidr = var.vpc_cidr
   alert_email = var.alert_email
   monthly_budget_limit = var.monthly_budget_limit
@@ -25,6 +26,7 @@ module "data_collection" {
 module "mlops" {
   source = "../../modules/mlops"
   name_prefix = "${var.environment}-${var.project}"
+  region = var.region
   curated_bucket_name = module.infrastructure.curated_bucket_name
   artifacts_bucket_name = module.infrastructure.artifacts_bucket_name
   ml_role_arn = module.infrastructure.ml_role_arn
