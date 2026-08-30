@@ -19,17 +19,28 @@ docs/
 
 ## Required tags
 
+The provider applies default tags to every resource through the root environment. Required tags include:
+
+- `Owner`
 - `Project = bmw`
 - `Team = developer`
 - `Environment = prod`
+- `CostCenter`
+
+No account IDs, ARNs or bucket names are committed in source.
 
 ## Deployment
 
-Configure AWS credentials or GitHub OIDC, copy `terraform/environments/prod/terraform.tfvars.example` to `terraform.tfvars`, then configure the S3 remote-state bucket.
+Configure AWS credentials or GitHub OIDC, copy `terraform/environments/prod/terraform.tfvars.example` to `terraform.tfvars`, then configure the S3 remote-state bucket without committing secrets or state files.
 
 ```bash
 cd terraform/environments/prod
-terraform init -backend-config="bucket=<STATE_BUCKET>" -backend-config="key=bmw/prod/terraform.tfstate" -backend-config="region=<AWS_REGION>" -backend-config="encrypt=true" -backend-config="use_lockfile=true"
+terraform init \
+  -backend-config="bucket=<STATE_BUCKET>" \
+  -backend-config="key=bmw/prod/terraform.tfstate" \
+  -backend-config="region=<AWS_REGION>" \
+  -backend-config="encrypt=true" \
+  -backend-config="use_lockfile=true"
 terraform fmt -recursive ../..
 terraform validate
 terraform plan

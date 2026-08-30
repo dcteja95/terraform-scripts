@@ -1,1 +1,4 @@
-output "validation_object" { value=aws_s3_object.validation_contract.key }
+output "validation_object" {
+  value = aws_s3_object.validation_contract.key
+}
+

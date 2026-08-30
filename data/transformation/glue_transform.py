@@ -5,7 +5,7 @@ from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from pyspark.sql.functions import col, to_timestamp
 
-args = getResolvedOptions(sys.argv, ["JOB_NAME", "RAW_PATH", "CURATED_PATH"])
+args = getResolvedOptions(sys.argv, ["JOB_NAME", "RAW_PATH", "CURATED_PATH", "TRAINING_PATH"])
 sc = SparkContext()
 glue_context = GlueContext(sc)
 spark = glue_context.spark_session
@@ -27,4 +27,15 @@ clean = (df
     .filter(col("target_count") >= 0)
 )
 clean.write.mode("overwrite").parquet(args["CURATED_PATH"])
+
+training = clean.select(
+    "target_count",
+    "season",
+    "workingday",
+    "weather",
+    "temp",
+    "humidity",
+    "windspeed",
+)
+training.write.mode("overwrite").option("header", "false").csv(args["TRAINING_PATH"])
 job.commit()

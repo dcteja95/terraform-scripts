@@ -1,3 +1,31 @@
-resource "aws_sagemaker_model" "this" { count=var.approved_model_package_arn == "" ? 0 : 1 name="${var.name_prefix}-model" execution_role_arn=var.ml_role_arn primary_container { model_package_name=var.approved_model_package_arn } tags=var.tags }
-resource "aws_sagemaker_endpoint_configuration" "this" { count=var.approved_model_package_arn == "" ? 0 : 1 name="${var.name_prefix}-endpoint-config" production_variants { variant_name="AllTraffic" model_name=aws_sagemaker_model.this[0].name initial_instance_count=1 instance_type=var.instance_type } tags=var.tags }
-resource "aws_sagemaker_endpoint" "this" { count=var.approved_model_package_arn == "" ? 0 : 1 name="${var.name_prefix}-endpoint" endpoint_config_name=aws_sagemaker_endpoint_configuration.this[0].name tags=var.tags }
+resource "aws_sagemaker_model" "this" {
+  count                    = var.approved_model_package_arn == "" ? 0 : 1
+  name                     = "${var.name_prefix}-model"
+  execution_role_arn       = var.ml_role_arn
+  enable_network_isolation = true
+  primary_container {
+    model_package_name = var.approved_model_package_arn
+  }
+  tags = var.tags
+}
+
+resource "aws_sagemaker_endpoint_configuration" "this" {
+  count       = var.approved_model_package_arn == "" ? 0 : 1
+  name        = "${var.name_prefix}-endpoint-config"
+  kms_key_arn = var.kms_key_arn
+  production_variants {
+    variant_name           = "AllTraffic"
+    model_name             = aws_sagemaker_model.this[0].name
+    initial_instance_count = 1
+    instance_type          = var.instance_type
+  }
+  tags = var.tags
+}
+
+resource "aws_sagemaker_endpoint" "this" {
+  count                = var.approved_model_package_arn == "" ? 0 : 1
+  name                 = "${var.name_prefix}-endpoint"
+  endpoint_config_name = aws_sagemaker_endpoint_configuration.this[0].name
+  tags                 = var.tags
+}
+

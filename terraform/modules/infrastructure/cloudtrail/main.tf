@@ -86,6 +86,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "audit" {
 
     filter {}
 
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+
     expiration {
       days = 3
     }
@@ -96,14 +100,34 @@ resource "aws_s3_bucket_lifecycle_configuration" "audit" {
   }
 }
 
+data "aws_iam_policy_document" "sns_topic" {
+  statement {
+    sid    = "AWSCloudTrailSNSPolicy"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+    actions   = ["SNS:Publish"]
+    resources = [var.sns_topic_arn]
+  }
+}
+
+resource "aws_sns_topic_policy" "cloudtrail" {
+  arn    = var.sns_topic_arn
+  policy = data.aws_iam_policy_document.sns_topic.json
+}
+
 resource "aws_cloudtrail" "this" {
   name                          = "${var.name_prefix}-cloudtrail"
   s3_bucket_name                = aws_s3_bucket.audit.id
   include_global_service_events = true
   is_multi_region_trail         = true
   enable_log_file_validation    = true
+  kms_key_id                    = var.kms_key_arn
+  sns_topic_name                = var.sns_topic_name
 
-  depends_on = [aws_s3_bucket_policy.audit]
+  depends_on = [aws_s3_bucket_policy.audit, aws_sns_topic_policy.cloudtrail]
 
   tags = merge(var.tags, {
     Name = "${var.name_prefix}-cloudtrail"
